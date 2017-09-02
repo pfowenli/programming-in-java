@@ -36,6 +36,8 @@ public class ManageEmployeeProject {
 		List<Integer> projectIDs = new ArrayList<Integer>();
 		projectIDs.add(manageEmployeeProject.addProject("Customer Relationship Management", new Date()));
 		projectIDs.add(manageEmployeeProject.addProject("A/B Testing", new Date()));
+		
+		
 
 		// list all the employees
 		manageEmployeeProject.listEmployees();

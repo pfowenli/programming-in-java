@@ -8,6 +8,9 @@
             <column name="id" />
             <generator class="native" />
         </id>
+        <property name="name" type="string">
+            <column name="name" />
+        </property>
         <property name="beginDate" type="java.util.Date">
             <column name="begin_date" />
         </property>
