@@ -60,4 +60,10 @@ public class Employee {
 	public void setProjects(Set<Project> projects) {
 		this.projects = projects;
 	}
+
+	@Override
+	public String toString() {
+		return "Employee [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", salary=" + salary
+				+ ", projects.size()=" + projects.size() + "]";
+	}
 }

@@ -11,10 +11,10 @@
         <property name="name" type="string">
             <column name="name" />
         </property>
-        <property name="beginDate" type="java.util.Date">
+        <property name="beginDate" type="java.util.Calendar">
             <column name="begin_date" />
         </property>
-        <property name="endDate" type="java.util.Date">
+        <property name="endDate" type="java.util.Calendar">
             <column name="end_date" />
         </property>
         <set name="employees" table="EMPLOYEE_PROJECT" inverse="false" lazy="true"

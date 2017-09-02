@@ -1,8 +1,11 @@
 package com.pfowenli.HibernateExample02;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.TimeZone;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
@@ -14,7 +17,7 @@ import org.hibernate.cfg.Configuration;
 public class ManageEmployeeProject {
 	
 	private static SessionFactory factory;
-
+	
 	public static void main(String[] args) {
 		
 		try {
@@ -34,10 +37,20 @@ public class ManageEmployeeProject {
 		
 		// add project records
 		List<Integer> projectIDs = new ArrayList<Integer>();
-		projectIDs.add(manageEmployeeProject.addProject("Customer Relationship Management", new Date()));
-		projectIDs.add(manageEmployeeProject.addProject("A/B Testing", new Date()));
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("America/Los_Angeles"), new Locale("English", "America"));
+		calendar.set(2017, Calendar.JULY, 29);
+		projectIDs.add(manageEmployeeProject.addProject("Customer Relationship Management", (Calendar) calendar.clone()));
+		calendar.set(2017, Calendar.AUGUST, 14);
+		projectIDs.add(manageEmployeeProject.addProject("A/B Testing", (Calendar) calendar.clone()));
+		calendar.set(2017, Calendar.SEPTEMBER, 6);
+		projectIDs.add(manageEmployeeProject.addProject("Customer Behavior Analysis", (Calendar) calendar.clone()));
 		
-		
+		// add employee-project relations
+		manageEmployeeProject.addProjectForEmployee(employeeIDs.get(0), projectIDs.get(0));
+		manageEmployeeProject.addProjectForEmployee(employeeIDs.get(0), projectIDs.get(1));
+		manageEmployeeProject.addProjectForEmployee(employeeIDs.get(1), projectIDs.get(0));
+		manageEmployeeProject.addProjectForEmployee(employeeIDs.get(2), projectIDs.get(0));
+		manageEmployeeProject.addProjectForEmployee(employeeIDs.get(2), projectIDs.get(2));
 
 		// list all the employees
 		manageEmployeeProject.listEmployees();
@@ -81,9 +94,7 @@ public class ManageEmployeeProject {
 			for (@SuppressWarnings("rawtypes")
 			Iterator iterator = employees.iterator(); iterator.hasNext();) {
 				Employee employee = (Employee) iterator.next();
-				System.out.print("First Name: " + employee.getFirstName());
-				System.out.print("  Last Name: " + employee.getLastName());
-				System.out.println("  Salary: " + employee.getSalary());
+				System.out.println(employee);
 			}
 			transaction.commit();
 		} catch (HibernateException e) {
@@ -105,6 +116,30 @@ public class ManageEmployeeProject {
 			transaction = session.beginTransaction();
 			Employee employee = (Employee) session.get(Employee.class, EmployeeID);
 			employee.setSalary(salary);
+			session.update(employee);
+			transaction.commit();
+		} catch (HibernateException e) {
+			if (transaction != null)
+				transaction.rollback();
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+	}
+	
+	/*
+	 * set projects for an employee
+	 */
+	public void addProjectForEmployee(Integer EmployeeID, Integer projectID) {
+		Session session = factory.openSession();
+		Transaction transaction = null;
+		try {
+			transaction = session.beginTransaction();
+			Employee employee = (Employee) session.get(Employee.class, EmployeeID);
+			Project project = (Project) session.get(Project.class, projectID);
+			Set<Project> projects = employee.getProjects();
+			projects.add(project);
+			employee.setProjects(projects);
 			session.update(employee);
 			transaction.commit();
 		} catch (HibernateException e) {
@@ -139,7 +174,7 @@ public class ManageEmployeeProject {
 	/*
 	 * create an project
 	 */
-	public Integer addProject(String name, Date beginDate) {
+	public Integer addProject(String name, Calendar beginDate) {
 		Session session = factory.openSession();
 		Transaction transaction = null;
 		Integer projectID = null;
@@ -171,8 +206,7 @@ public class ManageEmployeeProject {
 			for (@SuppressWarnings("rawtypes")
 			Iterator iterator = projects.iterator(); iterator.hasNext();) {
 				Project project = (Project) iterator.next();
-				System.out.print("Name: " + project.getName());
-				System.out.println(" Begin Date: " + project.getBeginDate());
+				System.out.println(project);
 			}
 			transaction.commit();
 		} catch (HibernateException e) {
