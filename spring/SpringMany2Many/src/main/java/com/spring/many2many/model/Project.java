@@ -70,7 +70,8 @@ public class Project {
 
 	@Override
 	public String toString() {
+		//return "Projects [id=" + id + ", name=" + name + ", employees.size()=" + employees.size() + "]";
 		return "Project [id=" + id + ", name=" + name + ", beginDate=" + beginDate + ", endDate=" + endDate
-				+ ", employees=" + employees + "]";
+				+ ", employees.size()=" + employees.size() + "]";
 	}
 }
